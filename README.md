@@ -105,3 +105,11 @@ data-warehouse-project/
 └── requirements.txt                    # Dependencies and requirements for the project
 ```
 ---
+## 🌟 About Me
+
+Hi there! I'm **Sefa Bockun**. I’m an IT professional and passionate Data Scientist.
+
+Let's stay in touch! Feel free to connect with me on the following platforms:
+
+[![LinkedIn](https://img.shields.io/badge/LinkedIn-0077B5?style=for-the-badge&logo=linkedin&logoColor=white)](https://www.linkedin.com/in/sefabckn/)
+[![Website](https://img.shields.io/badge/Website-000000?style=for-the-badge&logo=google-chrome&logoColor=white)](https://sefabckn.github.io/SefaTheAnalyst.github.io/index.html)
