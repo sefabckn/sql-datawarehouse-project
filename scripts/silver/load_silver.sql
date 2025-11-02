@@ -1,7 +1,7 @@
 /**********************************************************************************************
  Script:        load_silver.sql
- Author:        [Your Name]
- Date:          [Date or Version]
+ Author:        Sefa Bockun (Tutor Baraa Salkini- Youtube tutorial) 
+ Date:          v1.0.0
  Database:      SQL Server
  Project:       Data Engineering Portfolio – Data Warehouse (Medallion Architecture)
 
