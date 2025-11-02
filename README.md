@@ -103,6 +103,96 @@ data-warehouse-project/
 ├── .gitignore                          # Files and directories to be ignored by Git
 └── requirements.txt                    # Dependencies and requirements for the project
 ```
+## 🗂️ Data Catalog (Gold Layer)
+
+This section documents the **business-ready (Gold)** layer of the data warehouse.  
+The Gold layer follows a **Star Schema** design optimized for analytics and reporting, with **fact** and **dimension** views built on top of the curated Silver layer.
+
+---
+
+### 🧍‍♂️ Dimension: `gold.dim_customers`
+
+| **Column Name**   | **Description**                                                                 | **Data Type**   | **Notes** |
+|-------------------|---------------------------------------------------------------------------------|-----------------|------------|
+| `customer_key`    | Surrogate key generated with `ROW_NUMBER()` for dimensional modeling.           | INT             | Primary key in the dimension table. |
+| `customer_id`     | Natural customer ID from source CRM system.                                    | VARCHAR / INT   | Used to join with fact table. |
+| `customer_number` | Customer business identifier from ERP system.                                  | VARCHAR         | Alternative business key. |
+| `first_name`      | Customer’s first name.                                                         | VARCHAR         |  |
+| `last_name`       | Customer’s last name.                                                          | VARCHAR         |  |
+| `country`         | Country of the customer, sourced from ERP location data.                       | VARCHAR         | Derived from `silver.erp_loc_a101`. |
+| `marital_status`  | Customer’s marital status.                                                     | VARCHAR         |  |
+| `gender`          | Gender information (from CRM or ERP if missing).                               | VARCHAR         | Logic handles missing or “n/a” values. |
+| `birthdate`       | Customer date of birth.                                                        | DATE            | From `silver.erp_cust_az12`. |
+| `create_date`     | Date the customer was created in the CRM system.                               | DATETIME        | Useful for cohort or retention analysis. |
+
+**Grain:** One record per unique customer.  
+**Sources:**  
+- `silver.crm_cust_info`  
+- `silver.erp_cust_az12`  
+- `silver.erp_loc_a101`
+
+---
+
+### 📦 Dimension: `gold.dim_products`
+
+| **Column Name**   | **Description**                                                                 | **Data Type**   | **Notes** |
+|-------------------|---------------------------------------------------------------------------------|-----------------|------------|
+| `product_key`     | Surrogate key generated with `ROW_NUMBER()` for dimensional modeling.           | INT             | Primary key in the dimension table. |
+| `product_id`      | Natural product ID from CRM.                                                   | VARCHAR / INT   | Used to link to facts. |
+| `product_number`  | Product business identifier from ERP system.                                   | VARCHAR         |  |
+| `product_name`    | Product name.                                                                  | VARCHAR         |  |
+| `category_id`     | Category identifier linked to category table.                                  | VARCHAR / INT   |  |
+| `category`        | Product category name.                                                         | VARCHAR         | From `silver.erp_px_cat_g1v2`. |
+| `sub_category`    | Product subcategory.                                                           | VARCHAR         |  |
+| `maintenance`     | Maintenance category/flag.                                                     | VARCHAR         |  |
+| `cost`            | Product cost.                                                                  | DECIMAL         |  |
+| `product_line`    | Product line or group name.                                                    | VARCHAR         |  |
+| `start_date`      | Product start/active date.                                                     | DATE            | Historical (ended) products are filtered out. |
+
+**Grain:** One record per active product.  
+**Sources:**  
+- `silver.crm_prd_info`  
+- `silver.erp_px_cat_g1v2`
+
+---
+
+### 💰 Fact: `gold.fact_sales`
+
+| **Column Name**   | **Description**                                                                 | **Data Type**   | **Notes** |
+|-------------------|---------------------------------------------------------------------------------|-----------------|------------|
+| `order_number`    | Unique sales order identifier.                                                 | VARCHAR / INT   | Natural key for fact table. |
+| `product_key`     | Foreign key referencing `dim_products.product_key`.                            | INT             |  |
+| `customer_key`    | Foreign key referencing `dim_customers.customer_key`.                          | INT             |  |
+| `order_date`      | Date the order was placed.                                                     | DATE            |  |
+| `shipping_date`   | Date the order was shipped.                                                    | DATE            |  |
+| `due_date`        | Date the order is due for delivery/payment.                                    | DATE            |  |
+| `sales_amount`    | Total sales amount for the order line.                                         | DECIMAL         |  |
+| `quantity`        | Quantity sold.                                                                 | INT             |  |
+| `price`           | Unit price of the product at sale time.                                        | DECIMAL         |  |
+
+**Grain:** One record per sales order line item.  
+**Sources:**  
+- `silver.crm_sales_details`  
+- Joined with `gold.dim_products` and `gold.dim_customers` for dimension enrichment.
+
+---
+
+### 🧩 Relationships
+
+| **Fact Table** | **Dimension**   | **Join Key**                                            | **Relationship Type** |
+|----------------|-----------------|---------------------------------------------------------|-----------------------|
+| `fact_sales`   | `dim_customers` | `fact_sales.customer_key = dim_customers.customer_key` | Many-to-one |
+| `fact_sales`   | `dim_products`  | `fact_sales.product_key = dim_products.product_key`    | Many-to-one |
+
+---
+
+### 🌟 Summary
+
+- **Data Model Type:** Star Schema  
+- **Purpose:** To enable efficient analytical queries on sales performance by customer and product.  
+- **Medallion Layer:** Gold (Business-level layer for reporting and BI tools)  
+- **Storage:** SQL Server Views built on curated Silver tables
+
 ---
 ## 🌟 About Me
 
