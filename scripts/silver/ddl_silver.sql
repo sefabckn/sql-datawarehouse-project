@@ -1,3 +1,53 @@
+/**********************************************************************************************
+ Script:        create_silver_tables.sql
+ Author:        Sefa Bockun ( Tutor Baraa Salkini - Youtube Tutorial)
+ Date:          v1.0.0
+ Database:      SQL Server
+ Project:       Data Engineering Portfolio – Data Warehouse (Medallion Architecture)
+
+ Description:
+ -----------------------------------------------------------------------------------------------
+ This script creates all **Silver Layer tables** used in the Data Warehouse as part of the 
+ **Medallion Architecture** (Bronze → Silver → Gold).
+
+ The Silver Layer represents the **curated and cleaned data zone**, where raw Bronze data is 
+ standardized, typed, and structured for analytical processing and loading into the Gold Layer.
+
+ Purpose:
+ -----------------------------------------------------------------------------------------------
+   1. Define the data structures for cleaned and conformed Silver tables.
+   2. Separate CRM and ERP data domains to maintain logical organization.
+   3. Add metadata tracking columns (e.g., `dwh_create_date`) for ETL auditing and lineage.
+
+ Layer Overview:
+ -----------------------------------------------------------------------------------------------
+   - **CRM Tables**
+       • `silver.crm_cust_info` – Customer master information (ID, name, marital status, gender).
+       • `silver.crm_prd_info` – Product master data (category, cost, product line, start/end dates).
+       • `silver.crm_sales_details` – Transactional sales data (orders, products, prices, quantities).
+
+   - **ERP Tables**
+       • `silver.erp_loc_a101` – Customer location and country data.
+       • `silver.erp_cust_az12` – Additional ERP customer attributes (birthdate, gender).
+       • `silver.erp_px_cat_g1v2` – Product category and maintenance hierarchy.
+
+ Notes:
+ -----------------------------------------------------------------------------------------------
+   - Each table includes a `dwh_create_date` metadata column populated automatically with `GETDATE()`.
+   - Existing tables are **dropped and recreated** to ensure schema consistency.
+   - Data is later populated via the `silver.load_silver` stored procedure.
+
+ Execution:
+ -----------------------------------------------------------------------------------------------
+   Run this script once during initial environment setup or when table structure updates are required.
+   Example:
+       ```sql
+       :r .\create_silver_tables.sql
+       ```
+
+**********************************************************************************************/
+
+
 -- CRM TABLES
 
 IF OBJECT_ID('silver.crm_cust_info' , 'U') IS NOT NULL
