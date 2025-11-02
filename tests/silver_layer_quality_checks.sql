@@ -1,3 +1,60 @@
+/**********************************************************************************************
+ Script:        dq_validation_checks.sql
+ Author:        Sefa Bockun
+ Date:          v1.0.0
+ Database:      SQL Server
+ Project:       Data Engineering Portfolio – Data Warehouse (Medallion Architecture)
+
+ Description:
+ -----------------------------------------------------------------------------------------------
+ This script performs **Data Quality (DQ) validation checks** on both **Bronze** and **Silver**
+ layers of the Data Warehouse. These checks ensure the integrity, completeness, and consistency 
+ of the data before it is promoted to the next processing layer (Silver → Gold).
+
+ Purpose:
+ -----------------------------------------------------------------------------------------------
+   - Validate data correctness and detect data quality issues early.
+   - Ensure standardized values and proper formatting.
+   - Identify missing, duplicate, or inconsistent records.
+   - Verify data transformations and cleansing logic applied in the Silver Layer.
+
+ Scope of Checks:
+ -----------------------------------------------------------------------------------------------
+   **Bronze Layer Validation**
+     • Detect duplicates and NULL keys in raw tables.
+     • Identify unwanted whitespace or untrimmed text fields.
+     • Validate numeric columns (e.g., negative or NULL product costs).
+     • Check invalid or reversed date ranges.
+     • Review categorical values for standardization.
+
+   **Silver Layer Validation**
+     • Recheck duplicates and NULLs after transformation.
+     • Confirm proper trimming and standardized values.
+     • Validate sales data integrity (price, quantity, total sales logic).
+     • Check referential consistency between tables (e.g., customer IDs).
+     • Ensure date fields are valid and chronologically consistent.
+
+ Expectations:
+ -----------------------------------------------------------------------------------------------
+   - Each validation query should return **no results** if the data quality is acceptable.
+   - Any non-empty result set indicates potential data issues requiring investigation.
+
+ Notes:
+ -----------------------------------------------------------------------------------------------
+   - The script is read-only; it performs no data modifications.
+   - Best run after Silver layer ETL execution (procedure: `silver.load_silver`).
+   - Designed for development and QA validation prior to production deployment.
+
+ Execution:
+ -----------------------------------------------------------------------------------------------
+   Run in sequence during validation testing:
+       ```sql
+       :r .\dq_validation_checks.sql
+       ```
+**********************************************************************************************/
+
+
+
 -- Check for duplicates and Nulls
 -- Expectation : No result
 
