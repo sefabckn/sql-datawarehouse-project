@@ -1,7 +1,7 @@
 /**********************************************************************************************
  Script:        gold_layer_views.sql
  Author:        Sefa Bockun ( Tutor : Baraa Salkini - Youtube Tutorial ) 
- Date:          [Date or Version]
+ Date:          v1.0.0
  Database:      SQL Server
  Project:       Data Engineering Portfolio – Data Warehouse (Medallion Architecture)
 
