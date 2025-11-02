@@ -1,3 +1,63 @@
+/**********************************************************************************************
+ Script:        load_silver.sql
+ Author:        [Your Name]
+ Date:          [Date or Version]
+ Database:      SQL Server
+ Project:       Data Engineering Portfolio – Data Warehouse (Medallion Architecture)
+
+ Description:
+ -----------------------------------------------------------------------------------------------
+ This script defines the **stored procedure** `silver.load_silver`, which performs the ETL process 
+ for the **Silver Layer** in the Medallion Architecture pipeline.
+
+ The Silver Layer serves as the **curated and cleaned data zone**, transforming and standardizing 
+ raw data from the Bronze layer. It ensures data quality, consistency, and usability for downstream 
+ analytics in the Gold Layer.
+
+ Purpose:
+ -----------------------------------------------------------------------------------------------
+   1. Extract and transform data from the Bronze layer.
+   2. Cleanse, standardize, and enrich datasets.
+   3. Load curated data into Silver tables ready for business consumption.
+
+ Process Overview:
+ -----------------------------------------------------------------------------------------------
+   - **CRM Tables**
+       • `silver.crm_cust_info`: Cleans customer data, normalizes gender and marital status, 
+         and retains the most recent record per customer.
+       • `silver.crm_prd_info`: Extracts category and product keys, calculates start/end dates, 
+         and maps product lines to descriptive labels.
+       • `silver.crm_sales_details`: Validates sales transactions, fixes invalid or missing dates, 
+         recalculates sales and prices if incorrect.
+
+   - **ERP Tables**
+       • `silver.erp_cust_az12`: Cleanses ERP customer attributes, standardizes gender, 
+         and removes invalid birthdates.
+       • `silver.erp_loc_a101`: Normalizes country codes and removes invalid values.
+       • `silver.erp_px_cat_g1v2`: Loads product category and maintenance information.
+
+ Logging and Control:
+ -----------------------------------------------------------------------------------------------
+   - Each table load step is **timed** using `GETDATE()` and `DATEDIFF()` for performance tracking.
+   - Informational messages are printed to the console for transparency during ETL execution.
+   - A global TRY...CATCH block captures and prints error details for debugging.
+
+ Notes:
+ -----------------------------------------------------------------------------------------------
+   - All Silver tables are truncated before reloading to ensure full refresh.
+   - This procedure is idempotent and can be safely rerun after data corrections.
+   - Ensures referential consistency between CRM and ERP Silver tables.
+
+ Execution:
+ -----------------------------------------------------------------------------------------------
+   To run this procedure manually:
+       ```sql
+       EXEC silver.load_silver;
+       ```
+
+**********************************************************************************************/
+
+
 CREATE OR ALTER PROCEDURE silver.load_silver AS
 BEGIN
     DECLARE @start_time DATETIME, @end_time DATETIME, @batch_start_time DATETIME, @batch_end_time DATETIME; 
