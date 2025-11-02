@@ -1,3 +1,54 @@
+/**********************************************************************************************
+ Script:        create_bronze_tables.sql
+ Author:        Sefa Bockun (Tutor Baraa Salkini - Youtube tutorial))
+ Date:          v1.0.0
+ Database:      SQL Server
+ Project:       Data Engineering Portfolio – Data Warehouse (Medallion Architecture)
+
+ Description:
+ -----------------------------------------------------------------------------------------------
+ This script creates all **Bronze Layer tables** used in the Data Warehouse as part of the 
+ **Medallion Architecture** (Bronze → Silver → Gold).
+
+ The Bronze Layer serves as the **raw data ingestion zone**, where data is loaded directly from 
+ source systems (CRM and ERP). At this stage, the data is stored with minimal or no transformation, 
+ preserving its original structure for traceability and auditing.
+
+ Purpose:
+ -----------------------------------------------------------------------------------------------
+   1. Define base tables for staging raw CRM and ERP data.
+   2. Maintain raw column names and data types consistent with source systems.
+   3. Act as a historical landing zone before data cleansing and transformation in the Silver Layer.
+
+ Layer Overview:
+ -----------------------------------------------------------------------------------------------
+   - **CRM Tables**
+       • `bronze.crm_cust_info` – Raw customer data with identifiers, names, and demographic info.
+       • `bronze.crm_prd_info` – Product reference data, including cost, lifecycle dates, and type.
+       • `bronze.crm_sales_details` – Raw transactional sales data (orders, quantities, and prices).
+
+   - **ERP Tables**
+       • `bronze.erp_loc_a101` – Customer location data from ERP source.
+       • `bronze.erp_cust_az12` – ERP customer information (birthdate, gender).
+       • `bronze.erp_px_cat_g1v2` – Product category and maintenance hierarchy data.
+
+ Notes:
+ -----------------------------------------------------------------------------------------------
+   - Tables are **dropped and recreated** each time to ensure a clean ingestion environment.
+   - No data cleansing or type normalization is applied in this layer.
+   - These tables act as inputs for the Silver Layer ETL process (`silver.load_silver`).
+
+ Execution:
+ -----------------------------------------------------------------------------------------------
+   Run this script during environment setup or when resetting the data ingestion layer.
+   Example:
+       ```sql
+       :r .\create_bronze_tables.sql
+       ```
+
+**********************************************************************************************/
+
+
 -- CRM TABLES
 
 IF OBJECT_ID('bronze.crm_cust_info' , 'U') IS NOT NULL
