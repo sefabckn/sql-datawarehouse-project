@@ -75,6 +75,11 @@ The data architecture for this project follows Medallion Architecture **Bronze**
 3. **Gold Layer**: Houses business-ready data modeled into a star schema required for reporting and analytics.
 
 ---
+## 🧩 Integration Model
+
+The following diagram illustrates the **Integration Model** of the Data Warehouse, showing the flow of data across the Bronze, Silver, and Gold layers, including relationships between source systems, transformation logic, and final analytical outputs.
+
+![Integration Model](docs/integration_model.drawio.png)
 
 
 ## 📂 Repository Structure
