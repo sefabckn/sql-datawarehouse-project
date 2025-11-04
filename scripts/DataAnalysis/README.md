@@ -16,7 +16,7 @@ The purpose is to:
 
 The diagram below illustrates the **data integration flow** across the three layers (Bronze → Silver → Gold):
 
-![Integration Model](docs/integration_model.drawio.png)
+![Integration Model](../../docs/integration_model.drawio.png)
 
 ---
 
